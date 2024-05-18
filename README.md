@@ -1,0 +1,1 @@
+ML Model to detect if an object is trash
