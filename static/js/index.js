@@ -110,6 +110,7 @@ function showInfoBox(lat, lng, count, placeName) {
   )})</p>
                             <p>Plastic bottles detected: ${count}</p>`;
 }
+
 document.addEventListener('DOMContentLoaded', requestUserLocation);
 
 document.getElementById('cameraButton').addEventListener('click', function () {
@@ -146,29 +147,42 @@ document.getElementById('cameraButton').addEventListener('click', function () {
 document.getElementById('captureButton').addEventListener('click', function () {
   const video = document.getElementById('video');
   const canvas = document.getElementById('canvas');
-  canvas.style.display = 'block';
+  const infoBox = document.getElementById('infoBox');
   const context = canvas.getContext('2d');
+  canvas.style.display = 'block';
   context.drawImage(video, 0, 0, 640, 480);
   video.style.display = 'none'; // Hide video after taking picture
 
-  fetch('/detect', {
-    method: 'POST',
-    body: formData,
-  })
-  .then(response => response.json())
-  .then(data => {
-      const bottleCount = data.bottle_count;
-      const message = bottleCount > 0
-          ? `Plastic bottles detected: ${bottleCount}`
-          : 'No plastic bottles detected';
-      infoBox.textContent = message;
-      infoBox.style.display = 'block';
+  const dataUrl = canvas.toDataURL('image/jpeg');
+  const blob = dataURLToBlob(dataUrl);
+  const formData = new FormData();
+  formData.append('image', blob);
 
-      if (bottleCount > 0) {
+  navigator.geolocation.getCurrentPosition((position) => {
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+
+    fetch('/detect', {
+      method: 'POST',
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const bottleCount = data.bottle_count;
+        const message =
+          bottleCount > 0
+            ? `Plastic bottles detected: ${bottleCount}`
+            : 'No plastic bottles detected';
+        infoBox.textContent = message;
+        infoBox.style.display = 'block';
+
+        if (bottleCount > 0) {
           updateHeatmap(lat, lng, bottleCount);
-      }
-  })
-.catch(error => console.error('Error:', error));
+        }
+      })
+      .catch((error) => console.error('Error:', error));
+  });
+
   const detectionDisplay = document.createElement('div');
   detectionDisplay.textContent = message;
   detectionDisplay.style.position = 'absolute';
@@ -195,4 +209,22 @@ document.getElementById('captureButton').addEventListener('click', function () {
   document.body.appendChild(closeButton);
 });
 
+function dataURLToBlob(dataURL) {
+  const parts = dataURL.split(',');
+  const byteString = atob(parts[1]);
+  const mimeString = parts[0].split(':')[1].split(';')[0];
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+  return new Blob([ab], { type: mimeString });
+}
+
+function updateHeatmap(lat, lng, count) {
+  // Placeholder for updating the heatmap data
+  console.log(`Updating heatmap with ${count} bottles at (${lat}, ${lng})`);
+}
+
 initMap();
+
