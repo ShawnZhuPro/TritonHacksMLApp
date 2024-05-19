@@ -26,7 +26,7 @@ function requestUserLocation() {
         console.error('Error: The Geolocation service failed.');
       }
     );
-  } else {
+  } else {//
     console.error("Error: Your browser doesn't support geolocation.");
   }
 }
