@@ -152,6 +152,8 @@ document.getElementById('captureButton').addEventListener('click', function () {
   canvas.style.display = 'block';
   context.drawImage(video, 0, 0, 640, 480);
   video.style.display = 'none'; // Hide video after taking picture
+  let message = "";
+  let detected = false;
 
   const dataUrl = canvas.toDataURL('image/jpeg');
   const blob = dataURLToBlob(dataUrl);
@@ -169,7 +171,7 @@ document.getElementById('captureButton').addEventListener('click', function () {
       .then((response) => response.json())
       .then((data) => {
         const bottleCount = data.bottle_count;
-        const message =
+        message =
           bottleCount > 0
             ? `Plastic bottles detected: ${bottleCount}`
             : 'No plastic bottles detected';
@@ -177,12 +179,14 @@ document.getElementById('captureButton').addEventListener('click', function () {
         infoBox.style.display = 'block';
 
         if (bottleCount > 0) {
+          detected = true;
           updateHeatmap(lat, lng, bottleCount);
         }
       })
       .catch((error) => console.error('Error:', error));
   });
 
+  // Notification display
   const detectionDisplay = document.createElement('div');
   detectionDisplay.textContent = message;
   detectionDisplay.style.position = 'absolute';

@@ -27,7 +27,7 @@ def detect_plastic_bottles():
     image = np.array(bytearray(image_file.read()), dtype=np.uint8)
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
-    boxes, confidences, class_ids, idxs = detect_objects(image)
+    boxes, confidences, class_ids, idxs = detect_plastic_bottle(image)
 
     bottle_class_id = 39  # class ID for plastic bottles in COCO dataset (0 index)
     if len(idxs) > 0:
