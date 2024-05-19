@@ -1,0 +1,34 @@
+body,
+html {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#video {
+  width: 640px;
+  height: 480px;
+  border: 1px solid black;
+}
+#snapshot {
+  width: 640px;
+  height: 480px;
+  display: none;
+  border: 1px solid black;
+}
+#result {
+  margin-top: 20px;
+}
+#cameraButton,
+#submitButton {
+  background-color: #ff4081;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 20px;
+}
