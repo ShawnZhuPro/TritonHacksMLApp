@@ -26,7 +26,7 @@ function requestUserLocation() {
         console.error('Error: The Geolocation service failed.');
       }
     );
-  } else {//
+  } else {
     console.error("Error: Your browser doesn't support geolocation.");
   }
 }
@@ -151,14 +151,24 @@ document.getElementById('captureButton').addEventListener('click', function () {
   context.drawImage(video, 0, 0, 640, 480);
   video.style.display = 'none'; // Hide video after taking picture
 
-  // Dummy logic for detection - replace this with your ML detection
-  const detected = Math.random() > 0.5; // Random detection status
-  const message = detected
-    ? 'Plastic bottle detected'
-    : 'Plastic bottle not detected';
-  if (detected) {
-    updateBottleCount(1);
-  }
+  fetch('/detect', {
+    method: 'POST',
+    body: formData,
+  })
+  .then(response => response.json())
+  .then(data => {
+      const bottleCount = data.bottle_count;
+      const message = bottleCount > 0
+          ? `Plastic bottles detected: ${bottleCount}`
+          : 'No plastic bottles detected';
+      infoBox.textContent = message;
+      infoBox.style.display = 'block';
+
+      if (bottleCount > 0) {
+          updateHeatmap(lat, lng, bottleCount);
+      }
+  })
+.catch(error => console.error('Error:', error));
   const detectionDisplay = document.createElement('div');
   detectionDisplay.textContent = message;
   detectionDisplay.style.position = 'absolute';
