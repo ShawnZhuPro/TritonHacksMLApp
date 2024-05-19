@@ -14,6 +14,8 @@ model_config = 'yolo/yolov3.cfg'
 model_weights = 'yolo/yolov3.weights'
 net = cv2.dnn.readNetFromDarknet(model_config, model_weights)
 
+
+
 # Load class labels
 with open('yolo/coco.names', 'r') as f:
     classes = f.read().strip().split('\n')  
@@ -34,21 +36,28 @@ def detect_plastic_bottles():
         bottle_count = sum(1 for i in idxs.flatten() if class_ids[i] == bottle_class_id)
     else:
         bottle_count = 0
-
+    
     return jsonify({'bottle_count': bottle_count})
 
+
+# gets bottles and map data
+@app.route('/sendData', methods=["POST"])
+def sendData():
+    return data
+    
+
 # Generate 100 points of dummy data around San Diego
-def generate_dummy_data():
+def generate_dummy_data(lat, lng, count):
     base_lat = 32.7157
     base_lng = -117.1611
     dummy_data = []
-
+    """
     for _ in range(100):
         random_lat = base_lat + (random.uniform(-0.05, 0.05))
         random_lng = base_lng + (random.uniform(-0.05, 0.05))
         count = random.randint(1, 20)
-        dummy_data.append({"lat": random_lat, "lng": random_lng, "count": count})
-
+    """
+    dummy_data.append({"lat": lat, "lng": lng, "count": count})
     return dummy_data
 
 dummy_data = generate_dummy_data()

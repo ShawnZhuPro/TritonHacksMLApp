@@ -32,6 +32,11 @@ document.addEventListener('DOMContentLoaded', function () {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
 
+      fetch('/sendData', {
+        method: 'POST',
+        body: {lat: lat, lng:lng},
+      })
+
       fetch('/process_image', {
         method: 'POST',
         body: formData,
